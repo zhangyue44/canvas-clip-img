@@ -35,11 +35,11 @@ export function she(vm) {
     drawGridLine() {
       for (let i = 1; i < this.maxX; i++) {
         this.ctx.moveTo(i * this.itemWidth, 0);
-        this.ctx.lineTo(i * this.itemWidth, this.canvas.width);
+        this.ctx.lineTo(i * this.itemWidth, this.canvas.height);
       }
       for (let i = 1; i < this.maxY; i++) {
         this.ctx.moveTo(0, i * this.itemWidth);
-        this.ctx.lineTo(this.canvas.clientHeight, i * this.itemWidth);
+        this.ctx.lineTo(this.canvas.width, i * this.itemWidth);
       }
       this.ctx.lineWidth = 1;
       this.ctx.strokeStyle = "#ddd";
