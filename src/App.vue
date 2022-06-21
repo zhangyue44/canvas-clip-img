@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <router-link to="/she">贪吃蛇</router-link>
+    <router-link to="/imgclip">图片裁剪</router-link>
+    <router-link to="/handwritten">手写签名</router-link>
     <router-view />
   </div>
 </template>

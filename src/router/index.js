@@ -6,6 +6,10 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
+    redirect: "/handwritten",
+  },
+  {
+    path: "/she",
     name: "about",
     component: () =>
       import(
