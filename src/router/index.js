@@ -8,9 +8,24 @@ const routes = [
     path: "/",
     name: "about",
     component: () =>
-      // import(/* webpackChunkName: "about" */ "../views/imgClip/AboutView.vue"),
       import(
         /* webpackChunkName: "about" */ "../views/tanchishe/AboutView.vue"
+      ),
+  },
+  {
+    path: "/imgclip",
+    name: "imgclip",
+    component: () =>
+      import(
+        /* webpackChunkName: "imgclip" */ "../views/imgClip/AboutView.vue"
+      ),
+  },
+  {
+    path: "/handwritten",
+    name: "handwritten",
+    component: () =>
+      import(
+        /* webpackChunkName: "handwritten" */ "../views/handwritten/AboutView.vue"
       ),
   },
 ];
