@@ -32,6 +32,14 @@ const routes = [
         /* webpackChunkName: "handwritten" */ "../views/handwritten/AboutView.vue"
       ),
   },
+  {
+    path: "/drawArea",
+    name: "drawArea",
+    component: () =>
+      import(
+        /* webpackChunkName: "handwritten" */ "../views/drawArea/drawArea.vue"
+      ),
+  },
 ];
 
 const router = new VueRouter({

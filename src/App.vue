@@ -1,31 +1,35 @@
 <template>
   <div id="app">
-    <router-link to="/she">贪吃蛇</router-link>
-    <router-link to="/imgclip">图片裁剪</router-link>
-    <router-link to="/handwritten">手写签名</router-link>
+    <div>
+      <router-link to="/she">贪吃蛇</router-link>
+      <router-link to="/imgclip">图片裁剪</router-link>
+      <router-link to="/handwritten">手写签名</router-link>
+      <router-link to="/drawArea">绘制区域</router-link>
+    </div>
     <router-view />
   </div>
 </template>
 
 <style>
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
 #app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
 }
-
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+a {
+  margin: 0 4px;
+  color: blue !important;
+  text-decoration: underline !important;
 }
 </style>
