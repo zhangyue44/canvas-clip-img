@@ -2,7 +2,7 @@
   <div class="canvas-container flex-1 w-full h-full relative">
     <canvas id="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
     <div class="btn absolute top-8 right-8">
-      <button class="mr-4" @click="startDraw">开启绘制能力</button>
+      <button class="mr-4" @click="startDraw">开启绘制多边形</button>
       <button class="mr-4" @click="del">关闭绘制能力</button>
       <button @click="delAll">清除绘制内容</button>
     </div>
