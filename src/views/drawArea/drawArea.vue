@@ -24,7 +24,7 @@ export default {
     };
   },
   mounted() {
-    this.canvas = this.commomResize();
+    this.canvas = this.firstResize();
     this.canvas.addEventListener("mousedown", this.addPoint);
     this.canvas.addEventListener("mousemove", this.mousePoint);
     this.canvas.addEventListener("contextmenu", this.endPoint);
@@ -36,8 +36,7 @@ export default {
     });
   },
   methods: {
-    // canvas大小响应式
-    commomResize() {
+    firstResize() {
       const canvas = document.getElementById("canvas");
       const container = document.getElementsByClassName("canvas-container")[0];
       // canvas.setAttribute("width", container.offsetWidth);
@@ -45,6 +44,13 @@ export default {
       this.canvasWidth = container.offsetWidth;
       this.canvasHeight = container.offsetHeight;
       return canvas;
+    },
+    // canvas大小响应式
+    commomResize() {
+      this.firstResize();
+      this.$nextTick(() => {
+        this.drawOtherArea();
+      });
     },
     windowToCanvas(x, y) {
       const box = this.canvas.getBoundingClientRect();
@@ -58,7 +64,7 @@ export default {
       this.point = [];
       this.isDraw = true;
     },
-    // 清除
+    // 关闭绘制
     del() {
       this.point = [];
       this.isDraw = false;
@@ -82,7 +88,7 @@ export default {
     },
     // canvas的mousemove事件
     mousePoint(e) {
-      if (this.isDraw) {
+      if (this.isDraw && this.point.length) {
         const res = this.windowToCanvas(e.clientX, e.clientY);
         this.drawPolygon(
           this.point.concat({
@@ -132,7 +138,7 @@ export default {
       e.preventDefault(); // 阻止冒泡到浏览器事件
       this.point.pop(); // 右键时会触发mousedown事件，所以要去除最后一个添加的点
       this.arrList.push(JSON.parse(JSON.stringify(this.point)));
-      this.isDraw = false;
+      this.point = [];
       this.drawOtherArea();
     },
     // 区域的重心点(几何中心点)
