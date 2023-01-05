@@ -105,7 +105,7 @@ export default {
       this.point = [];
       this.isDraw = false;
     },
-    // 清除canvas的全部内容
+    // 清除canvas的全部内容TODO:暂时无用了
     delCanvas() {
       if (this.canvasDraw.origin >= 1) {
         this.ctx.clearRect(
@@ -289,8 +289,15 @@ export default {
       this.ctx.stroke();
     },
     // 绘制之前绘制好的区域
-    drawOtherArea() {
-      this.delCanvas();
+    drawOtherArea(params) {
+      if (params !== "noClear") {
+        this.clearCanvas();
+        this.ctx.translate(this.canvasDraw.offset.x, this.canvasDraw.offset.y);
+        this.ctx.scale(
+          this.canvasDraw.originScale,
+          this.canvasDraw.originScale
+        );
+      }
       this.arrList.forEach((item, index) => {
         this.ctx.beginPath();
         this.ctx.fillStyle = "red";
@@ -369,7 +376,7 @@ export default {
       this.clearCanvas();
       this.ctx.translate(this.canvasDraw.offset.x, this.canvasDraw.offset.y);
       this.ctx.scale(this.canvasDraw.originScale, this.canvasDraw.originScale);
-      this.drawOtherArea();
+      this.drawOtherArea("noClear");
     },
     // 重设canvas尺寸会清空并重置canvas内置的scale等
     clearCanvas() {
