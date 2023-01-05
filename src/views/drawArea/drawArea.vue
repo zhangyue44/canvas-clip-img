@@ -100,7 +100,7 @@ export default {
     },
     // 清除绘制内容
     delAll() {
-      this.delCanvas();
+      this.clearCanvas();
       this.arrList = [];
       this.point = [];
       this.isDraw = false;
@@ -257,7 +257,6 @@ export default {
     },
     // 绘制区域
     drawPolygon(list) {
-      this.delCanvas();
       this.drawOtherArea();
       this.ctx.beginPath();
       this.ctx.strokeStyle = "red";
@@ -272,7 +271,6 @@ export default {
     },
     // 绘制矩形
     drawRectangle(left, top, w, h) {
-      this.delCanvas();
       this.drawOtherArea();
       this.ctx.beginPath();
       this.ctx.strokeStyle = "red";
@@ -282,7 +280,6 @@ export default {
     },
     // 绘制圆形
     drawCircle(point, r) {
-      this.delCanvas();
       this.drawOtherArea();
       this.ctx.beginPath();
       this.ctx.strokeStyle = "red";
