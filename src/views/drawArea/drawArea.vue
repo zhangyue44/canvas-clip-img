@@ -66,7 +66,7 @@ export default {
     commomResize() {
       this.firstResize();
       this.$nextTick(() => {
-        this.drawOtherArea();
+        this.drawReset();
       });
     },
     windowToCanvas(x, y) {
