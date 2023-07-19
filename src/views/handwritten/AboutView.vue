@@ -80,6 +80,7 @@ export default {
           break;
       }
     },
+    // 测试一下
     huabi() {
       this.ctx.beginPath();
       this.ctx.globalAlpha = 1;
