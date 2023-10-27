@@ -5,6 +5,7 @@
       <router-link to="/imgclip">图片裁剪</router-link>
       <router-link to="/handwritten">手写签名</router-link>
       <router-link to="/drawArea">绘制区域</router-link>
+      <router-link to="/fab">fabric</router-link>
     </div>
     <router-view />
   </div>

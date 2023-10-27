@@ -40,6 +40,12 @@ const routes = [
         /* webpackChunkName: "handwritten" */ "../views/drawArea/drawArea.vue"
       ),
   },
+  {
+    path: "/fab",
+    name: "fab",
+    component: () =>
+      import(/* webpackChunkName: "handwritten" */ "../views/fab/Index.vue"),
+  },
 ];
 
 const router = new VueRouter({
