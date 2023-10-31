@@ -1,56 +1,57 @@
 <template>
   <div
+    v-loading="loading"
     class="editorBox fixe top-0 right-0 bottom-0 left-0 overflow-auto"
     :class="{ active: visible }"
   >
-    <span class="close-btn absolute top-5 right-5" @click="cancel">
-      <!-- <Icon name="common_cross" class="text-4xl"/> -->
-    </span>
+    <span class="close-btn absolute top-5 right-5" @click="cancel"
+      ><Icon name="common_cross" class="text-4xl"
+    /></span>
     <div class="tool-btn absolute top-2 left-1/2 flex flex-col items-center">
       <div>
-        <button
+        <el-button
           :class="{ 'is-icon': true, active: !isActive }"
           title="选择对象"
           @click="resetDraw"
         >
-          <!-- <Icon name="mouse@build-platform" /> -->
-        </button>
-        <button
+          <Icon name="mouse@build-platform" />
+        </el-button>
+        <el-button
           :class="{ 'is-icon': true, active: isActive === 'draw' }"
           title="绘制"
           @click="openDrawing"
         >
-          <!-- <Icon name="icon_edit@build-platform" /> -->
-        </button>
-        <button
+          <Icon name="icon_edit@build-platform" />
+        </el-button>
+        <el-button
           :class="{ 'is-icon': true, active: isActive === 'text' }"
           title="文本"
           @click="openText"
         >
-          <!-- <Icon name="paragraph@ocge" /> -->
-        </button>
-        <button
+          <Icon name="paragraph@ocge" />
+        </el-button>
+        <el-button
           v-show="activeTingShow"
           :class="{ 'is-icon': true }"
           title="删除"
           @click="deleteThing"
         >
-          <!-- <Icon name="common_transhcan" /> -->
-        </button>
-        <button
+          <Icon name="common_transhcan" />
+        </el-button>
+        <el-button
           :class="{ 'is-icon': true }"
           title="替换原图"
           @click="saveToSurvery"
         >
-          <!-- <Icon name="icon_right_sm@cotech" /> -->
-        </button>
-        <button
+          <Icon name="icon_right_sm@cotech" />
+        </el-button>
+        <el-button
           :class="{ 'is-icon': true }"
           title="保存本地"
           @click="saveToLocal"
         >
-          <!-- <Icon name="common_save_l@yabby" /> -->
-        </button>
+          <Icon name="common_save_l@yabby" />
+        </el-button>
       </div>
       <div
         :class="{
@@ -75,12 +76,11 @@
 <script>
 import { fabric } from "fabric";
 import { debounce } from "lodash";
-import srcUrl from "@/views/imgClip/sss.jpg";
-// import { COSS } from "@/class/oss.js";
-// import {
-//   addPositionAttachments,
-//   deletePositionAttachment,
-// } from "@/api/esurvey/mapNew.js";
+import { COSS } from "@/class/oss.js";
+import {
+  addPositionAttachments,
+  deletePositionAttachment,
+} from "@/api/esurvey/mapNew.js";
 
 function dataURLtoFile(dataurl, filename) {
   // base64 -> file
@@ -98,13 +98,12 @@ export default {
   props: {
     visible: { type: Boolean, default: false },
     file: { type: Object, default: () => null },
-    // type: { type: String, default: "position" },
-    // id: { type: [String, Number], default: "" },
+    type: { type: String, default: "position" },
+    id: { type: [String, Number], default: "" },
   },
   data() {
     return {
       loading: false,
-      useSrcUrl: srcUrl,
       isActive: null,
       colorList: [
         { id: 1, value: "rgb(255, 0, 0)" },
@@ -123,24 +122,52 @@ export default {
   watch: {
     visible(val) {
       if (val) {
-        this.canvas = new fabric.Canvas("editorcanvas", {
-          backgroundVpt: false,
-          selection: false,
-        });
+        this.canvas = new fabric.Canvas("editorcanvas", { selection: false });
         this.canvas.freeDrawingBrush.width = 10;
         this.canvas.freeDrawingBrush.limitedToCanvasSize = true;
-        this.canvas.on("mouse:up", (e) => {
+        this.canvas.on("mouse:down", (opt) => {
           const activeObj = this.canvas.getActiveObject();
           this.activeThingchange(activeObj);
           if (!activeObj) {
             if (this.isActive === "draw") return;
             this.activeChange(null);
           }
+          const evt = opt.e;
+          if (!this.isActive && !activeObj) {
+            this.dragging.open = true;
+            this.dragging.lastPosX = evt.clientX;
+            this.dragging.lastPosY = evt.clientY;
+          }
+        });
+        this.canvas.on("mouse:move", (opt) => {
+          // 平移画板
+          if (this.dragging.open) {
+            const evt = opt.e;
+            const vpt = this.canvas.viewportTransform;
+            vpt[4] += evt.clientX - this.dragging.lastPosX;
+            vpt[5] += evt.clientY - this.dragging.lastPosY;
+            this.canvas.requestRenderAll();
+            this.dragging.lastPosX = evt.clientX;
+            this.dragging.lastPosY = evt.clientY;
+          }
+        });
+        this.canvas.on("mouse:up", (e) => {
+          if (this.dragging.open) {
+            this.canvas.setViewportTransform(this.canvas.viewportTransform);
+            this.dragging.open = false;
+          }
+        });
+        this.canvas.on("mouse:wheel", (opt) => {
+          const delta = opt.e.deltaY;
+          let zoom = this.canvas.getZoom();
+          zoom *= 0.999 ** delta;
+          if (zoom > 20) zoom = 20;
+          if (zoom < 1) zoom = 1;
+          this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
         });
         const img = document.createElement("img");
-        img.crossOrigin = "anonymous";
-        img.src = this.useSrcUrl;
-        // img.src = this.file.playUrl;
+        img.crossOrigin = "anonymous"; // 图片跨域
+        img.src = this.file.playUrl;
         img.onload = () => {
           let width;
           let height;
@@ -170,7 +197,11 @@ export default {
           imgHeight: null,
           width: null,
           height: null,
-          radio: null,
+        };
+        this.dragging = {
+          open: false,
+          lastPosX: null,
+          lastPosY: null,
         };
       }
     },
@@ -195,23 +226,26 @@ export default {
       imgHeight: null,
       width: null,
       height: null,
-      radio: null,
+    };
+    this.dragging = {
+      open: false,
+      lastPosX: null,
+      lastPosY: null,
     };
   },
   mounted() {
     const node = document.querySelector(".editorBox");
     if (node) document.body.append(node);
-    // this.COSSInstance = new COSS({
-    //   serviceName: "esurvey",
-    // });
+    this.COSSInstance = new COSS({
+      serviceName: "esurvey",
+    });
   },
   methods: {
     initCanvas(width, height, imgWidth, imgHeight) {
       this.canvas.setDimensions({ width, height });
       this.$nextTick(() => {
         this.canvas.setBackgroundImage(
-          // this.file.playUrl,
-          this.useSrcUrl,
+          this.file.playUrl,
           this.canvas.renderAll.bind(this.canvas),
           {
             imgWidth,
@@ -220,6 +254,7 @@ export default {
             scaleY: height / imgHeight,
             originX: "left",
             originY: "top",
+            crossOrigin: "anonymous",
           }
         );
       });
@@ -267,7 +302,8 @@ export default {
         ml: false,
       });
       this.canvas.add(text);
-      text.center();
+      this.canvas.viewportCenterObject(text);
+      // text.center();
       this.canvas.setActiveObject(text);
       text.enterEditing();
       text.selectAll();
@@ -327,6 +363,7 @@ export default {
     },
     saveToLocal() {
       this.loading = true;
+      this.canvas.backgroundVpt = false;
       const { imgWidth, imgHeight, width, height } = this.domData;
       this.initCanvas(imgWidth, imgHeight, imgWidth, imgHeight);
       this.canvas.viewportTransform = [
@@ -344,6 +381,7 @@ export default {
           width: imgWidth,
           height: imgHeight,
         });
+        this.canvas.backgroundVpt = true;
         this.canvas.viewportTransform = [1, 0, 0, 1, 0, 0];
         this.initCanvas(width, height, imgWidth, imgHeight);
         const link = document.createElement("a");
@@ -357,6 +395,7 @@ export default {
     },
     saveToSurvery() {
       this.loading = true;
+      this.canvas.backgroundVpt = false;
       const { imgWidth, imgHeight, width, height } = this.domData;
       this.initCanvas(imgWidth, imgHeight, imgWidth, imgHeight);
       this.canvas.viewportTransform = [
@@ -374,6 +413,7 @@ export default {
           width: imgWidth,
           height: imgHeight,
         });
+        this.canvas.backgroundVpt = true;
         this.canvas.viewportTransform = [1, 0, 0, 1, 0, 0];
         this.initCanvas(width, height, imgWidth, imgHeight);
         const file = dataURLtoFile(dataURL, new Date().getTime());
